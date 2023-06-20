@@ -10,10 +10,11 @@ import requests
 from requests.exceptions import ConnectionError
 import json
           
-#PORT = '/dev/ttyUSB0'
-PORT = '/dev/ttyS1'
+PORT = '/dev/ttyUSB0'
+# PORT = '/dev/ttyS1'
 BAUD_RATE = 115200
-
+lable_list = ['gate:', 'rack:', 'pir:', 'voltage12v:', 'voltage5v:', 'voltage3_3v:','boardTemp:']
+sens_list = ['', '', '', '', '', '', '']
 
 #------------------------------------------------------------------------------ 
 def info_func(data: str) -> bool:
@@ -32,10 +33,12 @@ def info_func(data: str) -> bool:
     for part in parts:
         if not part.replace(".", "").isnumeric():   # change float and check is number
             return False
-    
+        
+    sens_list[-4:] = parts  # replace the last fourth elements in list
     # Open the file in write mode
     with open("RMS_INFO.txt", "w") as f:
-        f.write('\n'.join(parts))    # Write the message to the file
+        sensData = '~'.join([x+y for x,y in zip(lable_list, sens_list)])
+        f.write('$' + sensData + '*')    # Write the message to the file
         f.close()
     
     # All conditions are met, return True
@@ -62,11 +65,12 @@ def sens_func(message: str) -> bool:
     for part in parts:
         if not part.isalpha():
             return False
-    
+        
+    sens_list[:3] = parts   # replace the first three elements in list
     # Open the file in write mode
-    with open("RMS_sensor.txt", "w") as f:
-        # Write the message to the file
-        f.write('\n'.join(parts))
+    with open("RMS_INFO.txt", "w") as f:
+        sensData = '~'.join([x+y for x,y in zip(lable_list, sens_list)])
+        f.write('$' + sensData + '*')    # Write the message to the file
         f.close()
     
     # Return True to indicate success
