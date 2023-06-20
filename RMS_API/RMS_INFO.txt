@@ -1,0 +1,1 @@
+$gate:gateOPEN~rack:rackOPEN~pir:pirON~voltage12v:11.94~voltage5v:4.84~voltage3_3v:3.29~boardTemp:33.38*
